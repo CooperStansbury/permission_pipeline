@@ -8,3 +8,7 @@ Currently, instantiation is rudimentary. Future work will be devoted to making p
 1. Allow threshold specification for positive class prediction to be specified from the CLI.
 1. Clean-up axiom definition.
 1. Make axiom definition more interesting.
+    1. Add document ids
+    1. Add annotations for p(x)
+    1. Add the person who 'signed' the form?
+    1. Add synthetic instances of clinical data?
