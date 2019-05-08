@@ -15,18 +15,28 @@ def get_class_from_ontolgy(ontology, string):
     return ontology.search_one(iri=string)
 
 
-def get_predictions(prediction_path):
-    """ return a df of instance data from csv """
-    df = pd.read_csv(prediction_path)
+def add_instance_ids(df):
+    """ return new pd.DataFrame with sequential record ID in new column """
     df['instance_id'] =  np.arange(len(df))
     return df
 
 
-def instantiatePermissionDirective(ontology, df):
+def get_predictions(prediction_path):
+    """ return a df of instance data from csv """
+    df = pd.read_csv(prediction_path)
+    df = add_instance_ids(df)
+    return df
+
+
+def clean_instance_id(string):
+    """ clean a string so that it can be used as an instance id """
+    return str(string).title().strip().replace(" ", "")
+
+
+def instantiate_permission_directive(ontology, df):
     """ create new instances of permission directive based on predictions """
     for idx, row in df.iterrows():
-        permission_id = str(row['instance_id']).title().strip().replace(" ", "")
-        # instantiate a new class based on value from csv file
+        permission_id = clean_instance_id(row['instance_id'])
         permission_direcive =  get_class_from_ontolgy(ontology,
                     "http://purl.obolibrary.org/obo/ICO_0000244")(permission_id)
 
@@ -34,12 +44,11 @@ def instantiatePermissionDirective(ontology, df):
     return ontology
 
 
-def instantiateInformedConsentForm(ontology, df):
+def instantiate_informed_consent_form(ontology, df):
     """ create new instances of informed consent form based on predictions """
     # NOTE: need unique so we don't instantiate duplicates
     for file_id in df['fileID'].unique():
-        file_id = str(file_id).title().strip().replace(" ", "")
-        # instantiate a new class based on value from csv file
+        file_id = clean_instance_id(file_id)
         informed_consent_form =  get_class_from_ontolgy(ontology,
                     "http://purl.obolibrary.org/obo/ICO_0000001")(file_id)
 
@@ -53,8 +62,8 @@ ontology_path = '../ontology/ico.owl'
 ontology = getOntology(ontology_path)
 df = get_predictions(prediction_path)
 
-new_ontology = instantiatePermissionDirective(ontology, df)
-new_ontology = instantiateInformedConsentForm(new_ontology, df)
+new_ontology = instantiate_permission_directive(ontology, df)
+new_ontology = instantiate_informed_consent_form(new_ontology, df)
 
 # TODO: specify relation between
 # TODO: get fileID name/metadata
