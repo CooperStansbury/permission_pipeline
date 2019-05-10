@@ -4,9 +4,10 @@ PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 PREFIX obo: <http://purl.obolibrary.org/obo/>
 
-SELECT ?permission ?text
+SELECT ?permission ?prob ?text
 WHERE {
   ?permission rdf:type ?type .
-  ?permission rdfs:comment ?text .
+  ?permission obo:text_value ?text .
+  ?permission obo:probability ?prob .
   ?type rdfs:subClassOf* obo:ICO_0000244 .
 }
