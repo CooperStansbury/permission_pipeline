@@ -69,17 +69,17 @@ def instantiate_permission_directive(ontology, df):
         # add annotations to the instance
         permission_directive.text_value = [row['text']]
         permission_directive.probability = [row['px_permission']]
-        permission_directive.fileID = [row['fileID']]
+        permission_directive.fileID = ['fileID' + str(row['fileID'])]
     return ontology
 
 
-def declare_permission_form_relation(ontology, df):
+def  declare_permission_from_relation(ontology, df):
     """ declare 'has_part' relation between fileID and permisison,
     return new_ontology"""
     for idx, row in df.iterrows():
-        form_instance_id = get_ontology_base_iri(ontology) + 'fileID' + clean_instance_id(row['fileID'])
+        form_instance_id = get_ontology_base_iri(ontology) + 'fileID' + clean_instance_id(row['fileID']) #TODO: line too long
         form_instance = get_class_from_ontolgy(ontology, form_instance_id)
-        permission_instance_id = get_ontology_base_iri(ontology) + 'permisison' + clean_instance_id(row['instance_id'])
+        permission_instance_id = get_ontology_base_iri(ontology) + 'permisison' + clean_instance_id(row['instance_id']) #TODO: line too long
         permission_instance = get_class_from_ontolgy(ontology, permission_instance_id)
         form_instance.has_part = [permission_instance]
     return ontology
@@ -100,7 +100,7 @@ if __name__ == "__main__":
 
     new_ontology = instantiate_informed_consent_form(ontology, df)
     new_ontology = instantiate_permission_directive(new_ontology, df)
-    new_ontology = declare_permission_form_relation(new_ontology, df)
+    new_ontology =  declare_permission_from_relation(new_ontology, df)
 
     individual_print_test(new_ontology)
     save_ontology(new_ontology)
